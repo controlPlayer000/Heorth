@@ -1,152 +1,127 @@
 # Heorth
 
-**A complete local AI server in a single Python file.**
-Chat, knowledge base (RAG), tool-using agents, autonomous loops, a multi-agent
-council, image generation, MCP and private web search — all behind a clean
-browser GUI, all running on your own machine. Nothing leaves your computer.
+![License: MIT](https://img.shields.io/badge/license-MIT-blue) ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
 
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Deployment](https://img.shields.io/badge/deployment-single%20file-orange)
-![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20macOS%20%7C%20Windows-8A2BE2)
+**A self-hosted AI workbench in a single Python file.**
 
-> *Heorth* is Old English for "hearth" — your models, at home.
+Heorth runs open-weight language models on your own machine — chat, autonomous
+agents, a coding assistant, document Q&A, vision, image generation and more,
+behind one local web interface. No accounts, no cloud, no telemetry: your
+conversations, documents and generated files never leave your computer.
 
----
+Everything is one file: `heorth.py`.
 
 ## Quick start
 
+1. Install [Python 3.10+](https://www.python.org) and [Ollama](https://ollama.com)
+2. Download `heorth.py` and run it:
+
 ```bash
-# 1. Install Ollama once (powers text generation)  →  https://ollama.com
-# 2. Run Heorth:
-python3 heorth.py          # Windows: python heorth.py
+python3 heorth.py        # Windows: python heorth.py
 ```
 
-That's the whole install. On first run Heorth creates a private Python
-environment next to itself (`heorth_data/venv`), installs its dependencies
-into it, restarts inside it, and opens **http://127.0.0.1:8317** in your
-browser. If Ollama isn't installed yet, the GUI shows the one-line install
-command for your OS and reconnects automatically once it's up.
-
-## What's inside
-
-| Area | What you get |
-|---|---|
-| **Dashboard** | Scans your RAM/GPU/CPU and recommends models that actually fit, with one-click downloads and a live "usable memory" gauge. |
-| **Chat** | Streaming responses, saved conversations, markdown, a Stop button that keeps partial replies. |
-| **Models** | Curated catalog plus live search across Ollama tags and Hugging Face GGUF repos. Pull with progress bars, remove with one click. |
-| **Knowledge (RAG)** | Drag-and-drop PDF / text / Markdown / code. Files are chunked and embedded locally; answers cite their sources. |
-| **Agent** | The model can call 10 built-in tools: web search, fetch URL, calculator, knowledge search, workspace file I/O, image generation, and opt-in Python/shell execution. |
-| **Loop** | Autonomous mode: the agent plans → acts → observes → repeats, thoughts visible live, until it calls `task_complete` or hits your iteration ceiling. |
-| **Council** | A panel of 2–10 consultants. Roles are designed per-question (always including a contrarian), they analyze **in parallel**, critique each other over consultation rounds, and a chair synthesizes the final answer. |
-| **Images** | Stable Diffusion (SD-Turbo / DreamShaper / SDXL-Turbo) installed from the GUI in one click. Every image auto-saves to a gallery; click to enlarge, hover to delete. |
-| **MCP** | Connect any stdio [Model Context Protocol](https://modelcontextprotocol.io) server; its tools appear to the agent automatically. |
-| **Web search** | Works out of the box (DuckDuckGo). One click sets up a private [SearXNG](https://docs.searxng.org) metasearch container via Docker — Heorth writes the config, starts the container, and routes the agent's searches through it. |
-| **Self-update** | Drop a newer `heorth*.py` into Downloads (or upload it in Settings). Heorth notices, shows an Update button, backs up the current version, swaps the file and restarts in place. |
+That's it. On first run Heorth creates a private Python environment next to
+itself (`heorth_data/venv`), installs its dependencies into it, restarts inside
+that environment and opens `http://127.0.0.1:8317` in your browser. The
+built-in model manager detects your hardware (GPU, VRAM, RAM) and recommends
+models that will actually run well on it — one click to download, one click to
+chat.
 
 ## Chat modes
 
-- **Plain** — just talk to the model.
-- **Knowledge** — answers grounded in your uploaded documents, with sources shown.
-- **Agent** — single-turn tool use: the model calls tools, then answers.
-- **Loop** — autonomous multi-step work with a hard iteration limit (Settings, default 15).
-- **Council** — parallel multi-agent deliberation; size, consultation rounds and
-  an optional shared web-research brief are configurable in Settings.
+| Mode | What it does |
+|---|---|
+| **Chat** | Plain conversation, with streaming, reasoning-model ("thinking") support and automatic web search when a question needs live information |
+| **Knowledge** | Answers grounded in your own documents (PDF, text, markdown) via a local embedding index |
+| **Agent** | Single-turn tool use: web search, fetch pages, run code, read/write workspace files, calculator, your MCP servers |
+| **Loop** | Autonomous agent: plans, calls tools, observes and repeats until it declares the task complete |
+| **Council** | A panel of models answer independently in parallel, critique each other over consultation rounds, and a chair writes the synthesis |
+| **Computer** | The model sees your screen and controls mouse and keyboard (PyAutoGUI) — off by default, behind a consent gate, with a live action log and an emergency stop |
+| **Coder** | A coding agent in the spirit of [opencode](https://opencode.ai) / Claude Code: point it at a project folder and it explores, edits and tests the code — locked inside that folder, read-only "plan mode" until you allow edits |
 
-Knowledge combines with any mode. Council is exclusive with Agent/Loop.
+## More features
 
-## Optional features (one click each, from the GUI)
+- **Runnable artifacts** — every code block gets a Copy button; HTML apps get a
+  "▶ Run app" button that saves the file and opens it running in a new tab
+  (served sandboxed, so generated apps can't touch Heorth's own API)
+- **Vision input** — attach up to 4 images to a message and ask about them with
+  a vision model (gemma3, qwen2.5vl, llava, …)
+- **Regenerate & export** — redo the last answer with one click; download any
+  conversation as Markdown or JSON
+- **Image generation** — local Stable Diffusion (optional, one-click install
+  from the GUI)
+- **Private web search** — optional self-hosted SearXNG container (the GUI
+  guides you), with DuckDuckGo as the fallback
+- **MCP client** — connect Model Context Protocol servers and the agent can
+  use their tools
+- **Self-update** — drop a newer `heorth*.py` in your Downloads folder and the
+  GUI offers to update, backs up the old version, and restarts itself on the
+  same address
 
-| Feature | What it installs | Size |
-|---|---|---|
-| Image generation | PyTorch + diffusers into Heorth's private venv | a few GB, once |
-| MCP client | the `mcp` package | tiny |
-| SearXNG search | a Docker container (`heorth-searxng`) with the JSON API pre-configured | ~300 MB image |
+## Using it from your phone
 
-SearXNG needs Docker; if it's missing, the Agent & Tools page shows the
-install steps for your OS first.
+Heorth's UI is responsive and works well in mobile browsers. On your Wi-Fi:
 
-## Flags & configuration
-
-```
-python3 heorth.py --port 9000      # different port (default 8317)
-python3 heorth.py --host 0.0.0.0   # expose on your LAN (default 127.0.0.1)
-python3 heorth.py --no-browser     # don't open the browser
-python3 heorth.py --system         # skip the private venv, use current Python
-HEORTH_DATA=/path python3 heorth.py   # relocate the data folder
-```
-
-Everything else — system prompt, context window, tool permissions, agent/loop/
-council limits, search backend, Ollama address, embedding model — lives in
-**Settings** in the GUI.
-
-## Your data
-
-Everything Heorth stores lives in one folder next to the script:
-
-```
-heorth_data/
-├── heorth.db      # conversations, settings, document index
-├── images/        # generated images
-├── rag_docs/      # your uploaded originals
-├── workspace/     # the agent's sandbox for file tools
-├── backups/       # previous versions, kept on every self-update
-├── updates/       # drop update files here (Downloads works too)
-└── venv/          # Heorth's private Python environment
+```bash
+python3 heorth.py --host 0.0.0.0
 ```
 
-Delete the folder to reset completely. Model weights themselves are managed
-by Ollama. Nothing is sent anywhere except the requests you explicitly make
-(web search / URL fetch tools, model downloads).
+The terminal prints the address to open on the phone (e.g.
+`http://192.168.1.20:8317`). Set an **access password** in
+Settings → Remote access — devices other than the server itself must unlock
+before they can use anything. For access from outside your home, use a
+WireGuard-based mesh like Tailscale or the fully open-source
+[Headscale](https://github.com/juanfont/headscale) / [NetBird](https://netbird.io);
+do **not** port-forward Heorth directly to the internet (it speaks plain HTTP).
 
-## How self-update works
+## Security model
 
-Each release is a single file with a `__version__` string. Heorth watches its
-own folder, `heorth_data/updates/` and `~/Downloads` for any newer
-`heorth*.py` (legacy `localmind*.py` also accepted). Updating validates the
-file compiles, backs up the running version to `backups/`, atomically swaps
-the script and restarts — the browser reconnects by itself. Installs that
-began life under the old LocalMind name keep their `localmind_data` folder
-and database automatically.
+Heorth is local-first software with real teeth for the ways local apps get
+attacked:
 
-## Troubleshooting
+- **DNS-rebinding and CSRF protection** — requests with unexpected Host or
+  cross-site Origin headers are rejected, so a malicious website you visit
+  cannot reach the API on localhost
+- **Optional access password** for every non-localhost device, with
+  constant-time comparison and brute-force damping
+- **Sandboxed artifacts** — model-generated HTML apps run with an opaque
+  origin and cannot call Heorth's API
+- **Consent gates** — code execution, computer control and Coder file edits
+  are all off by default and must be switched on explicitly
+- **Path confinement** — workspace, Coder and image tools each refuse to
+  touch anything outside their designated folder (including symlink escapes)
 
-- **Black generated images** — fixed in v1.2.1. Apple Silicon now runs the
-  VAE in full precision (fp16 on MPS produces NaN → black frames), and CUDA
-  cards with broken fp16 (e.g. GTX 16-series) are auto-detected: Heorth
-  retries in fp32 and remembers.
-- **Port already in use** — Heorth automatically tries the next free port,
-  or pass `--port`.
-- **"Ollama isn't running"** — install/start Ollama; the Models page has
-  per-OS instructions and a re-check button.
-- **Council feels slow** — that's local hardware reality. Requests are
-  dispatched in parallel, but true concurrency depends on your VRAM and
-  Ollama's `OLLAMA_NUM_PARALLEL`. 3–5 consultants is the sweet spot.
-- **Fresh dependency state** — delete `heorth_data/venv` and rerun; Heorth
-  rebuilds it.
+Heorth has no authentication on `127.0.0.1` by design: anything running on
+your own machine is already inside your trust boundary.
 
-## Architecture (for the curious)
+## Command line
 
-One file by design — it's what makes the self-update mechanism trivial.
-Inside: a FastAPI backend (chat streaming over NDJSON, SQLite for state,
-numpy cosine search for RAG), Ollama as the text-generation engine, diffusers
-for images, and a zero-build vanilla-JS single-page frontend embedded as a
-base64 blob. The venv bootstrap keeps the host Python untouched.
+```
+python3 heorth.py [--host 127.0.0.1] [--port 8317] [--no-browser]
+```
 
-## Contributing
+| Flag | Meaning |
+|---|---|
+| `--host` | Bind address. Use `0.0.0.0` to allow other devices on your network |
+| `--port` | Preferred port (auto-bumps if busy) |
+| `--no-browser` | Don't open the browser on start |
 
-Issues and PRs welcome. Keep it single-file, keep it dependency-light, and
-bump `__version__` in any PR that changes behavior — the update mechanism
-relies on it.
+## Data & privacy
+
+Everything Heorth stores lives in `heorth_data/` next to the script:
+conversations (SQLite), your document index, generated images and artifacts,
+the agent workspace, update backups and logs. Delete the folder and Heorth
+starts fresh. Nothing is sent anywhere except the requests you explicitly
+make (model downloads from Ollama, web search when enabled).
+
+## Requirements
+
+- Python 3.10 or newer
+- [Ollama](https://ollama.com) for text generation (the GUI shows one-line
+  install instructions if it's missing)
+- Optional: Docker (private SearXNG search), a GPU (larger models, image
+  generation)
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
-
-## Credits
-
-Built on the shoulders of [Ollama](https://ollama.com),
-[Hugging Face diffusers](https://github.com/huggingface/diffusers),
-[SearXNG](https://github.com/searxng/searxng),
-[FastAPI](https://fastapi.tiangolo.com) and the
-[Model Context Protocol](https://modelcontextprotocol.io).
+[MIT](LICENSE)
