@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.0 — Images move into the chat
+
+### Added
+- **/imagine in chat**: type `/imagine a lighthouse at dusk, oil painting` in
+  any conversation and the picture is generated right there, with live
+  progress, saved into the conversation history and the gallery. Uses the
+  default model chosen on the Images page; Regenerate works on image messages
+  too.
+- **Custom image models**: add any Hugging Face diffusers text-to-image repo
+  on the Images page and it appears in the model picker (weights download on
+  first use).
+- The model picker now shows which models are already downloaded (✓) versus
+  their first-use download size, and remembers your default choice.
+
+### Changed
+- The Images page is now primarily the gallery plus model management; the
+  full generation form remains there for seeds, sizes and experimenting.
+
 ## 1.9.0 — Reliability round
 
 ### Fixed
